@@ -68,21 +68,13 @@
                             <h:outputText value="JSON retourné dans la réponse :"/>
                             <button onclick="copyToClipboard('jsonreponse')">Copier réponse JSON</button>
                         </h:panelGroup>
-                        <h:inputTextarea id="jsonreponse" value="#{bb.texteReponseJson}" title="Réponse JSON"
-                                         cols="50" rows="15" readonly="true"/>
+
                     </h:panelGrid>
 
 
 
                 </h:panelGrid>
-                <h:panelGrid id="paneldroit" columns="1" style="vertical-align: top;">
-                    <h:panelGroup>
-                        <h:outputText value="Conversation :"/>
-                        <button onclick="copyToClipboard('conversation')">Copier conversation</button>
-                    </h:panelGroup>
-                    <h:inputTextarea id="conversation" rows="30" cols="50" readonly="true"
-                                     value="#{bb.conversation}" title="Conversation entière"/>
-                </h:panelGrid>
+
 
             </h:panelGrid>
         </h:form>
