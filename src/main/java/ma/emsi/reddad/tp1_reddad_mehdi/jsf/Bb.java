@@ -7,6 +7,10 @@ import jakarta.faces.model.SelectItem;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import ma.emsi.reddad.tp1_reddad_mehdi.llm.JsonUtilPourGemini;
+import ma.emsi.reddad.tp1_reddad_mehdi.llm.LlmClientPourGemini;
+import ma.emsi.reddad.tp1_reddad_mehdi.llm.LlmInteraction;
+import ma.emsi.reddad.tp1_reddad_mehdi.llm.RequeteException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -63,6 +67,12 @@ public class Bb implements Serializable {
      */
     @Inject
     private FacesContext facesContext;
+
+    @Inject
+    private JsonUtilPourGemini jsonUtil;
+
+    @Inject
+    private LlmClientPourGemini geminiClient;
 
     /**
      * Obligatoire pour un bean CDI (classe gérée par CDI), s'il y a un autre constructeur.
@@ -154,32 +164,40 @@ public class Bb implements Serializable {
             facesContext.addMessage(null, message);
             return null;
         }
-        // Nouveau traitement créatif
-        StringBuilder sb = new StringBuilder();
+        try {
+            // Si la conversation n'a pas encore commencé...
+            if (this.conversation.isEmpty()) {
+                // Définir le rôle système dans notre utilitaire JSON
+                jsonUtil.setSystemRole(this.roleSysteme);
+                // Invalide le bouton pour changer le rôle système
+                this.roleSystemeChangeable = false;
+            }
 
-// Si c’est la première réponse, ajouter le rôle système
-        if (this.conversation.isEmpty()) {
-            sb.append(roleSysteme.toUpperCase(Locale.FRENCH)).append("\n");
-            this.roleSystemeChangeable = false;
+            // Envoyer la requête à l'API Gemini
+            LlmInteraction interaction = jsonUtil.envoyerRequete(question);
+
+            // Mettre à jour les champs du backing bean avec les résultats
+            this.reponse = interaction.reponseExtraite();
+            this.texteRequeteJson = interaction.questionJson(); // Pour le mode debug
+            this.texteReponseJson = interaction.reponseJson(); // Pour le mode debug
+
+            // La conversation contient l'historique des questions-réponses
+            afficherConversation();
+
+        } catch (RequeteException e) {
+            // Gérer les erreurs de l'API (ex: 400, 429, 500)
+            String detail = (e.getRequeteJson() != null) ? "Voir JSON: " + e.getRequeteJson() : e.toString();
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Erreur API: " + e.getMessage(), detail);
+            facesContext.addMessage(null, message);
+            e.printStackTrace(); // Bon pour le débogage côté serveur
+        } catch (Exception e) {
+            // Gérer toutes les autres erreurs (ex: connexion impossible)
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Erreur inattendue: " + e.getMessage(), e.toString());
+            facesContext.addMessage(null, message);
+            e.printStackTrace();
         }
-
-// Traitement : on inverse chaque mot de la question
-        String[] mots = question.trim().split("\\s+");
-        for (String mot : mots) {
-            sb.append(new StringBuilder(mot).reverse().toString()).append(" ");
-        }
-
-// Ajout d’un emoji selon le ton
-        String trimmed = question.trim();
-        if (trimmed.endsWith("?")) {
-            sb.append("🤔");
-        } else if (trimmed.endsWith("!")) {
-            sb.append("😲");
-        } else {
-            sb.append("💬");
-        }
-
-        this.reponse = sb.toString().trim();
 
         // La conversation contient l'historique des questions-réponses depuis le début.
         afficherConversation();
