@@ -1,4 +1,4 @@
-package ma.emsi.reddad.tp0jakarta.jsf;
+package ma.emsi.reddad.tp1_reddad_mehdi.jsf;
 
 
 import jakarta.faces.application.FacesMessage;
@@ -52,6 +52,11 @@ public class Bb implements Serializable {
      * La conversation depuis le début.
      */
     private StringBuilder conversation = new StringBuilder();
+    private String texteRequeteJson;
+
+    private String texteReponseJson;
+
+    private boolean debug = false;
 
     /**
      * Contexte JSF. Utilisé pour qu'un message d'erreur s'affiche dans le formulaire.
@@ -104,6 +109,33 @@ public class Bb implements Serializable {
 
     public void setConversation(String conversation) {
         this.conversation = new StringBuilder(conversation);
+    }
+
+    public String getTexteRequeteJson(){
+        return texteRequeteJson;
+    }
+
+    public void setTexteRequeteJson(String texteRequeteJson) {
+        this.texteRequeteJson = texteRequeteJson;
+    }
+
+    public String getTexteReponseJson(){
+        return texteReponseJson;
+    }
+
+    public void setTexteReponseJson(String texteReponseJson) {
+        this.texteReponseJson = texteReponseJson;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public void toggleDebug() {
+        this.setDebug(!isDebug());
     }
 
     /**

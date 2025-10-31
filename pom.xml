@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ma.emsi.reddad</groupId>
-    <artifactId>Tp0jakarta</artifactId>
+    <artifactId>tp1_reddad_mehdi</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Tp0jakarta</name>
+    <name>tp1_reddad_mehdi</name>
     <packaging>war</packaging>
 
     <properties>
