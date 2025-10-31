@@ -250,6 +250,13 @@ public class Bb implements Serializable {
                     are you tell them the average price of a meal.
                     """;
             this.listeRolesSysteme.add(new SelectItem(role, "Guide touristique"));
+
+            role = """
+                    You are a personal finance advisor. Help users with budgeting,
+                    saving strategies, financial planning, and money management advice.
+                    Provide practical and actionable suggestions.
+                    """;
+            this.listeRolesSysteme.add(new SelectItem(role, "Conseiller financier"));
         }
 
         return this.listeRolesSysteme;
